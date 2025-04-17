@@ -25,7 +25,7 @@ POST http://localhost:8080/categories - создание новой катего
 }
 GET http://localhost:8080/categories -получение всех категорий;
 DELETE http://localhost:8080/categories/{id}-удаление категории по id;
--Transactions:
+- Transactions:
 POST http://localhost:8080/transactions?userId={user_id}-создание транзакции по user_id;
 Тело запроса:
 {
