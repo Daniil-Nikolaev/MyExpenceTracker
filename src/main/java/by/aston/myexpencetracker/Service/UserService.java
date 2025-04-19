@@ -22,7 +22,7 @@ public class UserService {
         }
         return userService;
     }
-    // В UserService
+
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -35,23 +35,45 @@ public class UserService {
                 map(userMapper::convertToDto).
                 collect(Collectors.toList());
     }
-    public Optional<UserDto> getById(int id){
+
+    public Optional<UserDto> getById(Integer id){
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
+
         Optional<User> user=userRepository.findById(id);
-        Optional<UserDto> userDto=Optional.of(userMapper.convertToDto(user.get()));
-        return userDto;
+        if (user.isPresent()){
+            Optional<UserDto> userDto=Optional.of(userMapper.convertToDto(user.get()));
+            return userDto;
+        }else{
+            return Optional.empty();
+        }
     }
 
     public void addUser(UserDto userDto) {
+        if(userDto.getName() == null && userDto.getPassword() == null && userDto.getBalance() == null){
+            throw new IllegalArgumentException("Invalid request");
+        }
+
         User user=userMapper.convertToEntity(userDto);
         userRepository.save(user);
     }
 
-    public void updateUser(UserDto userDto,int id) {
+    public void updateUser(UserDto userDto,Integer id) {
+        if(userDto.getName() == null && userDto.getPassword() == null && userDto.getBalance() == null){
+            throw new IllegalArgumentException("Invalid request");
+        }
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
         User user=userMapper.convertToEntity(userDto);
         userRepository.update(user,id);
     }
 
-    public void deleteUser(int id) {
+    public void deleteUser(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
         userRepository.delete(id);
     }
 }

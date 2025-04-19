@@ -36,11 +36,26 @@ public class CategoryController {
         }
     }
 
-    public void addCategory(CategoryCreateDto categoryCreateDto) {
-        categoryService.addCategory(categoryCreateDto);
+    public void addCategory(CategoryCreateDto categoryCreateDto,HttpServletResponse response) throws IOException {
+        try {
+            categoryService.addCategory(categoryCreateDto);
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        }catch (IllegalArgumentException e) {
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
+        }
     }
 
-    public void deleteCategory(int id) {
-        categoryService.deleteCategory(id);
+    public void deleteCategory(int id,HttpServletResponse response) throws IOException {
+        try {
+            categoryService.deleteCategory(id);
+            response.setStatus(HttpServletResponse.SC_OK);
+        }catch (IllegalArgumentException e) {
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("id cannot be null");
+        }
+
     }
 }

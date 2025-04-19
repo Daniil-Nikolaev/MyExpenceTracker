@@ -40,28 +40,53 @@ public class UserController {
 
     public void getById(int id,HttpServletResponse response)throws IOException{
         Optional<UserDto> user = userService.getById(id);
-
-        if(user.isPresent()){
-            String json=objectMapper.writeValueAsString(user.get());
+        try {
+            if(user.isPresent()){
+                String json=objectMapper.writeValueAsString(user.get());
+                response.setContentType("application/json");
+                response.getWriter().write(json);
+                response.setStatus(HttpServletResponse.SC_OK);
+            }else{
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }catch (IllegalArgumentException e){
             response.setContentType("application/json");
-            response.getWriter().write(json);
-            response.setStatus(HttpServletResponse.SC_OK);
-        }else{
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("id cannot be null");
         }
-
     }
 
-    public void addUser(UserDto userDto){
-        userService.addUser(userDto);
+    public void addUser(UserDto userDto,HttpServletResponse response) throws IOException {
+        try {
+            userService.addUser(userDto);
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        }catch (IllegalArgumentException e){
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
+        }
     }
 
-    public void updateUser(UserDto UserDto,int id){
-        userService.updateUser(UserDto,id);
+    public void updateUser(UserDto UserDto,int id,HttpServletResponse response) throws IOException {
+        try{
+            userService.updateUser(UserDto,id);
+            response.setStatus(HttpServletResponse.SC_OK);
+        }catch (IllegalArgumentException e){
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
+        }
     }
 
-    public void deleteUser(int id){
-        userService.deleteUser(id);
+    public void deleteUser(int id,HttpServletResponse response) throws IOException {
+        try{
+            userService.deleteUser(id);
+            response.setStatus(HttpServletResponse.SC_OK);
+        }catch (IllegalArgumentException e){
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("id cannot be null");
+        }
     }
 }

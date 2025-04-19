@@ -31,15 +31,14 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UserDto userDto=mapper.readValue(req.getReader(), UserDto.class);
 
-        userController.addUser(userDto);
-        resp.setStatus(HttpServletResponse.SC_CREATED);
+        userController.addUser(userDto,resp);
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getPathInfo().substring(1));
-        userController.deleteUser(id);
-        resp.setStatus(HttpServletResponse.SC_OK);
+
+        userController.deleteUser(id,resp);
     }
 
     @Override
@@ -48,7 +47,6 @@ public class UserServlet extends HttpServlet {
         UserDto userDto = mapper.readValue(req.getReader(), UserDto.class);
         int id = Integer.parseInt(req.getPathInfo().substring(1));
 
-        userController.updateUser(userDto,id);
-        resp.setStatus(HttpServletResponse.SC_OK);
+        userController.updateUser(userDto,id,resp);
     }
 }

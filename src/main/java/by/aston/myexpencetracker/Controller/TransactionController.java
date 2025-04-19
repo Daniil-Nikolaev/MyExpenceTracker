@@ -27,49 +27,82 @@ public class TransactionController {
     }
 
     public void getAll(HttpServletResponse response, int userId) throws IOException {
-        List<TransactionDto> all = transactionService.getAllTransactions(userId);
+        try{
+            List<TransactionDto> all = transactionService.getAllTransactions(userId);
 
-        if (all.isEmpty()) {
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } else {
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            if (all.isEmpty()) {
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                objectMapper.registerModule(new JavaTimeModule());
+                objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            String json = objectMapper.writeValueAsString(all);
+                String json = objectMapper.writeValueAsString(all);
+                response.setContentType("application/json");
+                response.getWriter().write(json);
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+        }catch (IllegalArgumentException e){
             response.setContentType("application/json");
-            response.getWriter().write(json);
-            response.setStatus(HttpServletResponse.SC_OK);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("id cannot be null");
         }
+
     }
 
     public void getById(HttpServletResponse response, int transactionId, int userId) throws IOException {
-        Optional<TransactionDto> transaction = transactionService.getTransaction(transactionId, userId);
+        try {
+            Optional<TransactionDto> transaction = transactionService.getTransaction(transactionId, userId);
 
-        if (transaction.isPresent()) {
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            if (transaction.isPresent()) {
+                objectMapper.registerModule(new JavaTimeModule());
+                objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            String json = objectMapper.writeValueAsString(transaction.get());
+                String json = objectMapper.writeValueAsString(transaction.get());
+                response.setContentType("application/json");
+                response.getWriter().write(json);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }catch (IllegalArgumentException e){
             response.setContentType("application/json");
-            response.getWriter().write(json);
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
+        }
+
+    }
+
+    public void addTransaction(TransactionDto transactionDto,int userId,HttpServletResponse response) throws IOException {
+        try{
+            transactionService.addTransaction(transactionDto,userId);
+        }catch (IllegalArgumentException e){
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
         }
     }
 
-    public void addTransaction(TransactionDto transactionDto,int userId){
-        transactionService.addTransaction(transactionDto,userId);
+    public void deleteTransaction(int transactionId,int userId,HttpServletResponse response) throws IOException {
+        try{
+            transactionService.deleteTransaction(transactionId,userId);
+        }catch (IllegalArgumentException e){
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
+        }
+
     }
 
-    public void deleteTransaction(int transactionId,int userId){
-        transactionService.deleteTransaction(transactionId,userId);
-    }
-
-    public void updateTransaction(TransactionDto transactionDto,int transactionId,int userId){
-        transactionService.updateTransaction(transactionDto,transactionId,userId);
+    public void updateTransaction(TransactionDto transactionDto,int transactionId,int userId,HttpServletResponse response) throws IOException {
+        try{
+            transactionService.updateTransaction(transactionDto,transactionId,userId);
+        }catch (IllegalArgumentException e){
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid request");
+        }
     }
 
 
