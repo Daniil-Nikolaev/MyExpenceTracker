@@ -33,11 +33,17 @@ public class CategoryService {
     }
 
     public void addCategory(CategoryCreateDto categoryCreateDto) {
+        if(categoryCreateDto.getName()==null){
+            throw new IllegalArgumentException("Invalid request");
+        }
         Category category=categoryCreateMapper.convertToEntity(categoryCreateDto);
         categoryRepository.save(category);
     }
 
-    public void deleteCategory(int id) {
+    public void deleteCategory(Integer id) {
+        if(id==null){
+            throw new IllegalArgumentException("id cannot be null ");
+        }
         categoryRepository.delete(id);
     }
 }

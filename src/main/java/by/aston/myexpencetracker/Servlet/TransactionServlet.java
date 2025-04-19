@@ -34,15 +34,13 @@ public class TransactionServlet extends HttpServlet {
         int userId=Integer.parseInt(request.getParameter("userId"));
         objectMapper.registerModule(new JavaTimeModule());
         TransactionDto transactionDto=objectMapper.readValue(request.getReader(), TransactionDto.class);
-        transactionController.addTransaction(transactionDto,userId);
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        transactionController.addTransaction(transactionDto,userId,response);
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int userId=Integer.parseInt(request.getParameter("userId"));
         int transactionId = Integer.parseInt(request.getPathInfo().substring(1));
-        transactionController.deleteTransaction(transactionId,userId);
-        response.setStatus(HttpServletResponse.SC_OK);
+        transactionController.deleteTransaction(transactionId,userId,response);
     }
 
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,8 +48,7 @@ public class TransactionServlet extends HttpServlet {
         int transactionId = Integer.parseInt(request.getPathInfo().substring(1));
         objectMapper.registerModule(new JavaTimeModule());
         TransactionDto transactionDto=objectMapper.readValue(request.getReader(), TransactionDto.class);
-        transactionController.updateTransaction(transactionDto,transactionId,userId);
-        response.setStatus(HttpServletResponse.SC_OK);
+        transactionController.updateTransaction(transactionDto,transactionId,userId,response);
     }
 
 }

@@ -24,13 +24,12 @@ public class CategoryServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         CategoryCreateDto categoryCreateDto=mapper.readValue(request.getReader(), CategoryCreateDto.class);
 
-        categoryController.addCategory(categoryCreateDto);
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        categoryController.addCategory(categoryCreateDto,response);
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getPathInfo().substring(1));
-        categoryController.deleteCategory(id);
-        response.setStatus(HttpServletResponse.SC_OK);
+
+        categoryController.deleteCategory(id,response);
     }
 }

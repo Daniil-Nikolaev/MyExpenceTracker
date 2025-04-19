@@ -29,29 +29,54 @@ public class TransactionService {
     }
 
 
-    public void addTransaction(TransactionDto transactionDto, int userId) {
+    public void addTransaction(TransactionDto transactionDto, Integer userId) {
+        if(transactionDto.getAmount()==null&&transactionDto.getDate()==null&&transactionDto.getDescription()==null){
+            throw new IllegalArgumentException("Invalid request");
+        }
+        if(userId==null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         Transaction transaction=transactionMapper.convertToEntity(transactionDto);
         transactionRepository.save(transaction,userId);
     }
 
-    public List<TransactionDto> getAllTransactions(int userId) {
+    public List<TransactionDto> getAllTransactions(Integer userId) {
+        if(userId==null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         List<Transaction> transactions=transactionRepository.findAll(userId);
         return transactions.stream().
                 map(transactionMapper::convertToDto).
                 collect(Collectors.toList());
     }
 
-    public Optional<TransactionDto> getTransaction(int transactionId, int userId) {
+    public Optional<TransactionDto> getTransaction(Integer transactionId, Integer userId) {
+        if (transactionId==null||userId==null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         Optional<Transaction> transaction=transactionRepository.findByTransactionId(transactionId,userId);
-        Optional<TransactionDto> transactionDto=Optional.of(transactionMapper.convertToDto(transaction.get()));
-        return transactionDto;
+        if(transaction.isPresent()){
+            Optional<TransactionDto> transactionDto=Optional.of(transactionMapper.convertToDto(transaction.get()));
+            return transactionDto;
+        }else{
+            return Optional.empty();
+        }
     }
 
-    public void deleteTransaction(int transactionId, int userId) {
+    public void deleteTransaction(Integer transactionId, Integer userId) {
+        if (transactionId==null||userId==null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         transactionRepository.delete(transactionId,userId);
     }
 
-    public void updateTransaction(TransactionDto transactionDto, int transactionId, int userId) {
+    public void updateTransaction(TransactionDto transactionDto, Integer transactionId, Integer userId) {
+        if(transactionDto.getAmount()==null&&transactionDto.getDate()==null&&transactionDto.getDescription()==null){
+            throw new IllegalArgumentException("Invalid request");
+        }
+        if (transactionId==null||userId==null){
+            throw new IllegalArgumentException("Id cannot be null");
+        }
         Transaction transaction=transactionMapper.convertToEntity(transactionDto);
         transactionRepository.update(transaction,transactionId,userId);
     }
